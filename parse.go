@@ -46,6 +46,15 @@ func extract(node ast.Node) (vars []string, err error) {
 	case *ast.BasicLit:
 		break
 
+	case *ast.CallExpr:
+		for _, arg := range node.(*ast.CallExpr).Args {
+			argVars, err := extract(arg)
+			if err != nil {
+				return vars, err
+			}	
+			vars = append(vars, argVars...)
+		}
+
 	default:
 		err = fmt.Errorf("unsupported node %+v (type %+v)", node, reflect.TypeOf(node))
 	}
